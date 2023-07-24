@@ -1,0 +1,2 @@
+SELECT SUM(v) AS sum_of_v
+FROM elements;

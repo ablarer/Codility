@@ -1,0 +1,36 @@
+-- Main query
+SELECT
+    event_type,
+    latest_value - second_latest_value AS value_difference
+FROM (
+    -- Subquery to get the latest and second latest values for each event_type
+    SELECT
+        event_type,
+        MAX(CASE WHEN rn = 1 THEN value END) AS latest_value,
+        MAX(CASE WHEN rn = 2 THEN value END) AS second_latest_value
+    FROM (
+        -- Subquery to rank the records by time within each event_type
+        SELECT
+            event_type,
+            value,
+            ROW_NUMBER() OVER(PARTITION BY event_type ORDER BY time DESC) as rn
+        FROM events
+    ) ranked_events
+    GROUP BY event_type
+) event_values
+WHERE
+    -- Filter out event_types that only have one record
+    latest_value IS NOT NULL
+    AND second_latest_value IS NOT NULL
+ORDER BY event_type;
+
+-- The innermost subquery uses the ROW_NUMBER() window function to assign a rank to each record within each event_type,
+-- ordered by time in descending order. The most recent record gets a rank of 1, the second most recent gets a rank of 2, and so on.
+
+-- The middle subquery groups by event_type and calculates the latest and second latest value for each event_type
+-- using the MAX() function and a conditional CASE statement.
+-- CASE statements within MAX() functions act as a filter before aggregation.
+
+-- The outermost query then calculates the difference between the latest and second latest values for each event_type,
+-- filters out event_types that only have one record (where latest_value or second_latest_value is NULL),
+-- and orders the results by event_type.
