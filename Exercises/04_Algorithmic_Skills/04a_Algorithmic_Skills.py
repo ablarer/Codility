@@ -13,4 +13,8 @@ def solution(A):
 
     return -1
 
-print(solution([1, 4, 3, 3, 1, 2]))
+print(solution([1, 3, 4, 3, 1, 2, 5]))
+
+# You should find the first unique number in A. In other
+# words, find the unique number with the lowest position in
+# A.

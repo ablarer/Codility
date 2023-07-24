@@ -15,5 +15,5 @@ def solution(T):
     return max(left_height, right_height) + 1
 
 
-T = Tree(5, Tree(3, Tree(20), Tree(21)), Tree(10, Tree(1)))
+T = (5, (3, (20, None, None), (21, None, None)), (10, (1, None, None), None))
 print(solution(T))
